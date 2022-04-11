@@ -1,0 +1,28 @@
+:root {
+  --theme-1-background-1  : #24283B;
+  --theme-1-background-2  : #333954;
+  --theme-1-green         : #45F1C2;
+  --theme-1-blue          : #0CA0D8;
+  --theme-1-cyan          : #14A5AE;
+  --theme-1-orange        : #cd5e42;
+  --theme-1-red           : #CD4277;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+  background-color: var(--theme-1-background-1);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}

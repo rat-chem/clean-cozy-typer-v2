@@ -1,0 +1,96 @@
+.appWrapper{
+  --theme-1-background-1  : #24283B;
+  --theme-1-background-2  : #333954;
+  --theme-1-green         : #45F1C2;
+  --theme-1-blue          : #0CA0D8;
+  --theme-1-cyan          : #14A5AE;
+  --theme-1-orange        : #cd5e42;
+  --theme-1-red           : #CD4277;
+
+  display: grid;
+  grid-auto-flow: row;
+  max-width: 48rem;
+  margin-top: 25vh;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: bolder;
+  font-size: 1.2rem;
+  border-radius: 0.25rem;
+}
+
+.container {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  padding: 1rem;
+  background-color: var(--theme-1-background-2);
+  border-radius: 0.25rem;
+}
+
+.userInputField {
+  all: unset;
+  color: white;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  background-color: hsl(227,15%,24%);
+  border-radius: 0.25rem;
+  background-color: var(--theme-1-background-1);
+}
+
+.userInputField:focus {
+  outline: none;
+}
+
+.refreshButton {
+  all: unset;
+  padding: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin-left: 1rem;
+  border-radius: 0.25rem;
+  background-color: hsl(227,15%,24%);
+  color: white;
+  background-color: var(--theme-1-background-1);
+  transition: 100ms;
+}
+
+.refreshButton:hover {
+  cursor: pointer;
+  background-color: var(--theme-background-2);
+}
+
+.refreshButton:focus {
+  background-color: var(--theme-1-background-2);
+}
+
+.currentHeader {
+  margin: 0.75rem;
+  justify-self: end;
+  color: white;
+}
+
+.header {
+  justify-self: center;
+  color: white;
+}
+
+.renderedWordsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-self: center;
+}
+
+.defaultWord {
+  color: white;
+}
+
+.currentWord {
+  color: var(--theme-1-blue);
+}
+
+.correctWord {
+  color: var(--theme-1-green);
+}
+
+.incorrectWord {
+  color: var(--theme-1-red);
+}
