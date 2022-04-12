@@ -1,212 +1,126 @@
 import type { NextPage } from "next"
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react'
 import styles from '../styles/Typer.module.css'
 
 const Typer: NextPage = () => {
-  const [keyPressed, setKeyPressed] = useState<string>('')
+  interface wordObj {
+    word: string,
+    class: string,
+    index: number,
+  }
+
+  const [quoteObjArr, setQuoteObjArr] = useState<wordObj[]>([])
   const [input, setInput] = useState<string>('')
-  const [quote, setQuote] = useState<string[]>([])
-  const [currentWord, setCurrentWord] = useState<string>('')
-  const [currentWordIndex, setCurrentWordIndex] = useState<number>(0)
-  const [previousWord, setPreviousWord] = useState<string>('')
-  const [previousInput, setPreviousInput] = useState<string>('')
-  const [wordsClasses, setWordsClasses] = useState<string[]>([])
-  const [newQuoteClicked, setNewQuoteClicked] = useState<boolean>(false)
-  const [correctWords, setCorrectWords] = useState<number>(0)
-  const [firstKeyStrokeCheck, setFirstKeyStrokeCheck] = useState<boolean>(false)
-  const [timerStart, setTimerStart] = useState<number>(0)
+  const [quoteObjArrCurrIndex, setQuoteObjArrCurrIndex] = useState<number>(0)
 
-  const inputHandler = (e: any) => {
-    switch (e.key) {
-      case ' ':
-        if (currentWord === input) {
-          setCorrectWords(correctWords + 1)
+  function validateInput(): wordObj[] {
+    return [...quoteObjArr].map(function(word: wordObj) {
+      if (word.index === quoteObjArrCurrIndex) {
+        if (word.word === input) {
+          word.class = 'styles.correctWord'
+        } else {
+          word.class = 'styles.incorrectWord'
         }
+      }
+      return word
+    })
+  } 
 
-        setPreviousWord(currentWord)
-        setPreviousInput(input)
-        
-        setCurrentWordIndex(currentWordIndex + 1)
-        setCurrentWord(quote[currentWordIndex])
-
-        setInput('')
-        break
-      default:
-        setKeyPressed(e.key)
-        break
-    }
-  }
-
-  const changeInput = (e: any) => {
-    if (!firstKeyStrokeCheck) {
-      console.log(e.key)
-      setFirstKeyStrokeCheck(true)
-      setTimerStart(Date.now())
-    }
-
+  function changeInput(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.value !== ' ') {
-      setInput(e.target.value)
+      return setInput(e.target.value)
     }
   }
 
-  const renderWord = (word: any, index: number) => {
-    let className: string = 'defaultWord'
-    
-    if (currentWordIndex !== 1) {
-      if (index < currentWordIndex - 2) {
-        className = wordsClasses[index]
-      } else if (index >= currentWordIndex - 2) {
-        if (previousWord === previousInput) {
-          className = 'correctWord'
-        } else {
-          className = 'incorrectWord'
-        }
-      }
-
-      let newWordsClasses: string[] = [ ...wordsClasses ]
-      newWordsClasses.push(className)
-      setWordsClasses([ ...newWordsClasses ])
-      
-      if (newWordsClasses[index] !== undefined) {
-        className = newWordsClasses[index]
-
-        if (className === 'correctWord') {
-          return (
-            <div className={ styles.correctWord }>
-              { word }
-              &nbsp;
-            </div>
-          )
-        } else {
-          return (
-            <div className={ styles.incorrectWord }>
-              { word }
-              &nbsp;
-            </div>
-          )
-        }
-      } else {
-        className = 'defaultWord'
-        if (index === newWordsClasses.length) {
-          className = 'currentWord'
-          return (
-            <div className={ styles.currentWord }>
-              { word }
-              &nbsp;
-            </div>
-          )
-        }
-        return (
-          <div className={ styles.defaultWord }>
-            { word }
-            &nbsp;
-          </div>
-        )
-      }
-    } else {
-      if (index === 0) {
-        className = 'currentWord'
-        return (
-          <div className={ styles.currentWord }>
-            { word }
-            &nbsp;
-          </div>
-        )
-      } else {
-        return (
-          <div className={ styles.defaultWord }>
-            { word }
-            &nbsp;
-          </div>
-        )
-      }
+  function inputHandler(e: KeyboardEvent) {
+    if (e.key === ' ') {
+      setQuoteObjArr(validateInput())
+      setQuoteObjArrCurrIndex((prevCount: number) => prevCount + 1)
+      return setInput('')
     }
   }
 
-  const renderAllWords = () => {
+  async function fetchQuote(): Promise<string> {
+    const response = await fetch('https://api.quotable.io/random')
+    const result = await response.json()
+    return result.content
+  }
+
+  function splitQuoteAtSpaces(splittableQuote: string): string[] {
+    return [...splittableQuote.split(' ')]
+  }
+
+  async function pageInit() {
+    let fetchedQuote = await fetchQuote()
+    let splitQuote = splitQuoteAtSpaces(fetchedQuote)
+    setQuoteObjArr(splitQuote.map(function(word: string, index: number) {
+      return {
+        word: word,
+        class: 'styles.defaultWord',
+        index: index,
+      }
+    }))
+  }
+
+  function renderQuote(renderableQuote: wordObj[]) {
     return (
       <div className={ styles.renderedWordsContainer }>
-        { quote.map((word: string, index: number) => (
-          <div key={ index }>
-            { renderWord(word, index) }
-          </div>
-        )) }
+        { [...renderableQuote].map(function(word: wordObj, index: number) {
+          switch (word.class) {
+            case 'styles.defaultWord':
+              if (word.index === quoteObjArrCurrIndex) {
+                return <div className={ styles.currentWord } key={ index }>
+                  { word.word }&nbsp;
+                </div>
+              } else {
+                return <div className={ styles.defaultWord } key={ index }>
+                  { word.word }&nbsp;
+                </div>
+              }
+            case 'styles.correctWord':
+              return <div className={ styles.correctWord } key={ index }>
+                { word.word }&nbsp;
+              </div>
+            case 'styles.incorrectWord':
+              return <div className={ styles.incorrectWord } key={ index }>
+                { word.word }&nbsp;
+              </div>
+          }
+        }) }
       </div>
     )
   }
 
-  const fetchRandomQuote = async () => {
-    const response: any = await fetch('https://api.quotable.io/random')
-    const result: any = await response.json()
-    
-    setQuote([...result.content.split(' ')])
-    setCurrentWord(result.content.split(' ')[0])
+  let memoizedRenderQuote = useMemo(function() {
+    return renderQuote(quoteObjArr)
+  }, [quoteObjArr])
 
-    if (currentWordIndex === 1) {
-      setNewQuoteClicked(!newQuoteClicked)
-    }
-
-    setCurrentWordIndex(1)
-  }
-
-  useEffect(() => {
-    fetchRandomQuote()
+  useEffect(function() {
+    console.log()
+    pageInit()
   }, [])
 
-  const newQuote = () => {
-    // reset each stateful element to default
-    setKeyPressed('')
-    setInput('')
-    setCurrentWord('')
-    setPreviousWord('')
-    setPreviousInput('')
-    setWordsClasses([...[]])
-    setCorrectWords(0)
-    setFirstKeyStrokeCheck(false)
-    setTimerStart(0)
-
-    fetchRandomQuote()
-  }
-
-  const CurrentHeader = () => {
-    return (
-      <div className={ styles.currentHeader }>
-        <div className={ styles.header }>
-          ACC: { Math.round(correctWords / quote.length * 100) }%
-          | WPM: { Math.round(correctWords / (((Date.now() - timerStart) * .001) / 60)) }
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    // WRAPPER JSX ELEMENT
+  return(
     <>
       <div className={ styles.appWrapper }>
-        { CurrentHeader() }
         <div className={ styles.container }>
-          {/** --RENDERS TYPING CONTENT-- */}
-          <div className=''>
-            { useMemo(() => {
-              return (
-                renderAllWords()
-              )
-            }, [currentWordIndex, newQuoteClicked]) }
+          <div>
+            { memoizedRenderQuote }
           </div>
-
-          <div className=''>
-            {/** --TYPER INPUT FIELD-- */}
+           <div className=''>
             <input
               value={ input }
-              onInput={ (e: any) => { changeInput(e) } } 
-              onKeyDown={ (e: any) => { inputHandler(e) } }
+              onInput={ function(e: ChangeEvent<HTMLInputElement>) {
+                changeInput(e)
+              }} 
+              onKeyDown={ function(e: any) {
+                inputHandler(e)
+              }}
               className={ styles.userInputField }
             />
-
-            {/** --NEW TYPING CONTENT/RESET BUTTON-- */}
             <button 
               className={ styles.refreshButton }
-              onClick={ () => { newQuote() } }>
+              onClick={ () => {} }>
               refresh
             </button>
           </div>
