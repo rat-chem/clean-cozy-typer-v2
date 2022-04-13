@@ -1,8 +1,116 @@
 import type { NextPage } from "next"
 import React, { useState, useEffect, useMemo, ChangeEvent, KeyboardEvent } from 'react'
 import styles from '../styles/Typer.module.css'
+import useEventListener from "@use-it/event-listener"
 
 const Typer: NextPage = () => {
+  interface keyboardButton {
+    key: string,
+    class: string,
+    index: number,
+  }
+
+  const KEYBOARD_KEYS = [
+    'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+    'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
+    'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.',
+  ]
+
+  const [visualKeyboard, setVisualKeyboard] = useState<keyboardButton[]>([])
+
+  function initializeKeyboardKey(key: string, index: number) {
+    return {
+      key: key,
+      class: 'styles.keyboardKeyNotPressed',
+      index: index,
+    }
+  }
+
+  function initializeVisualKeyboard(): keyboardButton[] {
+    return [...KEYBOARD_KEYS].map(initializeKeyboardKey)
+  }
+
+  function renderVisualKeyboardKey(key: keyboardButton, index: number) {
+    if (key.class === 'styles.keyboardKeyNotPressed') {
+      return <div className={ styles.keyboardKeyNotPressed } key={ index }>
+        { key.key }
+      </div>
+    } else {
+      return <div className={ styles.keyboardKeyPressed } key={ index }>
+        { key.key }
+      </div>
+    }
+  }
+
+  function renderVisualKeyboard() {
+    return (
+      <div className={ styles.renderedWordsContainer }>
+        { [...visualKeyboard].map(function(key: keyboardButton, index: number) {
+          return renderVisualKeyboardKey(key, index)
+        }) }
+      </div>
+    )
+  }
+
+  function renderVisualKeyboardLayer1() {
+    return (
+      <div className={ styles.renderedWordsContainer }>
+        { [...visualKeyboard.slice(0, 10)].map(function(key: keyboardButton, index: number) {
+          return renderVisualKeyboardKey(key, index)
+        }) }
+      </div>
+    )
+  }
+
+  function renderVisualKeyboardLayer2() {
+    return (
+      <div className={ styles.renderedWordsContainer }>
+        { [...visualKeyboard.slice(10, 19)].map(function(key: keyboardButton, index: number) {
+          return renderVisualKeyboardKey(key, index)
+        }) }
+      </div>
+    )
+  }
+
+  function renderVisualKeyboardLayer3() {
+    return (
+      <div className={ styles.renderedWordsContainer }>
+        { [...visualKeyboard.slice(19)].map(function(key: keyboardButton, index: number) {
+          return renderVisualKeyboardKey(key, index)
+        }) }
+      </div>
+    )
+  }
+
+  function reInitKeyboardClass(key: string, keyClass: string, index: number) {
+    return {
+      key: key,
+      class: keyClass,
+      index: index,
+    }
+  }
+
+  function reInitVisualKeyboardOnKeyDown(inputKey: any): keyboardButton[] {
+    return [...KEYBOARD_KEYS].map(function(key: string, index: number) {
+      if ((inputKey.key).toLowerCase() !== key.toLowerCase()) {
+        return reInitKeyboardClass(key, 'styles.keyboardKeyNotPressed', index)
+      } else {
+        return reInitKeyboardClass(key, 'styles.keyboardKeyPressed', index)
+      }
+    })
+  }
+
+  function onKeyPressDownChangeClass(key: any) {
+    setVisualKeyboard(reInitVisualKeyboardOnKeyDown(key))
+  }
+
+  function onKeyPressUpChangeClass() {
+    setVisualKeyboard(initializeVisualKeyboard)
+  }
+
+  useEventListener('keydown', onKeyPressDownChangeClass)
+  useEventListener('keyup', onKeyPressUpChangeClass)
+
   interface wordObj {
     word: string,
     class: string,
@@ -11,11 +119,11 @@ const Typer: NextPage = () => {
 
   const [quoteObjArr, setQuoteObjArr] = useState<wordObj[]>([])
   const [input, setInput] = useState<string>('')
-  const [quoteObjArrCurrIndex, setQuoteObjArrCurrIndex] = useState<number>(0)
+  const [currentTyperIndex, setCurrentTyperIndex] = useState<number>(0)
   const [typingStartTime, setTypingStartTime] = useState<number | undefined>(undefined)
 
   function wordCorrectness(word: wordObj) {
-    if (word.index === quoteObjArrCurrIndex) {
+    if (word.index === currentTyperIndex) {
       if (word.word === input) {
         word.class = 'styles.correctWord'
       } else {
@@ -41,7 +149,7 @@ const Typer: NextPage = () => {
   function inputHandler(e: KeyboardEvent) {
     if (e.key === ' ') {
       setQuoteObjArr(validateInput())
-      setQuoteObjArrCurrIndex((prevCount: number) => prevCount + 1)
+      setCurrentTyperIndex((prevCount: number) => prevCount + 1)
       return setInput('')
     }
   }
@@ -65,7 +173,7 @@ const Typer: NextPage = () => {
   }
 
   function initializeQuoteObjArr(splitQuote: string[]): wordObj[] {
-    return splitQuote.map(initializeWord)
+    return [...splitQuote].map(initializeWord)
   }
   
   async function pageInit() {
@@ -75,7 +183,7 @@ const Typer: NextPage = () => {
   }
 
   async function refreshPage() {
-    setQuoteObjArrCurrIndex(0)
+    setCurrentTyperIndex(0)
     setTypingStartTime(undefined)
     pageInit()
   }
@@ -104,18 +212,14 @@ const Typer: NextPage = () => {
     </div>
   }
 
-  function checkForCurrentWord(word: wordObj, index: number) {
-    if (word.index === quoteObjArrCurrIndex) {
-      return renderCurrentWord(word, index)
-    } else {
-      return renderDefaultWord(word, index)
-    }
-  }
-
   function renderWord(word: wordObj, index: number) {
     switch (word.class) {
       case 'styles.defaultWord':
-        checkForCurrentWord(word, index)
+        if (word.index === currentTyperIndex) {
+          return renderCurrentWord(word, index)
+        } else {
+          return renderDefaultWord(word, index)
+        }
       case 'styles.correctWord':
         return renderCorrectWord(word, index)
       case 'styles.incorrectWord':
@@ -151,7 +255,7 @@ const Typer: NextPage = () => {
     if (typingStartTime === undefined) {
       return '--'
     } else {
-      if (quoteObjArrCurrIndex === quoteObjArr.length) {
+      if (currentTyperIndex === quoteObjArr.length) {
         return Math.round(
           (correctWords() / ((Date.now() - typingStartTime) * 0.001)) * 60
         )
@@ -178,10 +282,11 @@ const Typer: NextPage = () => {
 
   let memoizedCurrentHeader = useMemo(function() {
     return currentHeader()
-  }, [quoteObjArrCurrIndex, memoizedRenderQuote])
+  }, [currentTyperIndex, memoizedRenderQuote])
 
   useEffect(function() {
     pageInit()
+    setVisualKeyboard(initializeVisualKeyboard)
   }, [])
 
   return(
@@ -209,6 +314,21 @@ const Typer: NextPage = () => {
               refresh
             </button>
           </div>
+        </div>
+        <div className={ styles.keyboard }>
+          { useMemo(function() {
+            return renderVisualKeyboardLayer1()
+          }, [visualKeyboard]) }
+        </div>
+        <div className={ styles.keyboard }>
+          { useMemo(function() {
+            return renderVisualKeyboardLayer2()
+          }, [visualKeyboard]) }
+        </div>
+        <div className={ styles.keyboard }>
+          { useMemo(function() {
+            return renderVisualKeyboardLayer3()
+          }, [visualKeyboard]) }
         </div>
       </div>
     </>

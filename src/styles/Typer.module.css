@@ -10,7 +10,7 @@
   display: grid;
   grid-auto-flow: row;
   max-width: 48rem;
-  margin-top: 25vh;
+  margin-top: 16vh;
   margin-left: auto;
   margin-right: auto;
   font-weight: bolder;
@@ -24,6 +24,7 @@
   padding: 1rem;
   background-color: var(--theme-1-background-2);
   border-radius: 0.25rem;
+  margin-bottom: 16vh;
 }
 
 .userInputField {
@@ -93,4 +94,23 @@
 
 .incorrectWord {
   color: var(--theme-1-red);
+}
+
+.keyboard {
+  justify-self: center;
+}
+
+.keyboardKeyNotPressed {
+  color: white;
+  padding: 0.25rem;
+  border: 0.1rem solid white;
+  margin: 0.1rem;
+}
+
+.keyboardKeyPressed {
+  color: black;
+  background-color: white;
+  padding: 0.25rem;
+  border: 0.1rem solid white;
+  margin: 0.1rem;
 }
