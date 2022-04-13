@@ -1,5 +1,5 @@
 import type { NextPage } from "next"
-import React, { useState, useEffect, useCallback, useMemo, ChangeEvent } from 'react'
+import React, { useState, useEffect, useMemo, ChangeEvent, KeyboardEvent } from 'react'
 import styles from '../styles/Typer.module.css'
 
 const Typer: NextPage = () => {
@@ -12,6 +12,7 @@ const Typer: NextPage = () => {
   const [quoteObjArr, setQuoteObjArr] = useState<wordObj[]>([])
   const [input, setInput] = useState<string>('')
   const [quoteObjArrCurrIndex, setQuoteObjArrCurrIndex] = useState<number>(0)
+  const [typingStartTime, setTypingStartTime] = useState<number | undefined>(undefined)
 
   function validateInput(): wordObj[] {
     return [...quoteObjArr].map(function(word: wordObj) {
@@ -28,6 +29,9 @@ const Typer: NextPage = () => {
 
   function changeInput(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.value !== ' ') {
+      if (typingStartTime === undefined) {
+        setTypingStartTime(Date.now())
+      }
       return setInput(e.target.value)
     }
   }
@@ -50,16 +54,26 @@ const Typer: NextPage = () => {
     return [...splittableQuote.split(' ')]
   }
 
-  async function pageInit() {
-    let fetchedQuote = await fetchQuote()
-    let splitQuote = splitQuoteAtSpaces(fetchedQuote)
-    setQuoteObjArr(splitQuote.map(function(word: string, index: number) {
+  function initializeQuoteObjArr(splitQuote: string[]): wordObj[] {
+    return splitQuote.map(function(word: string, index: number) {
       return {
         word: word,
         class: 'styles.defaultWord',
         index: index,
       }
-    }))
+    })
+  }
+  
+  async function pageInit() {
+    let fetchedQuote = await fetchQuote()
+    let splitQuote = splitQuoteAtSpaces(fetchedQuote)
+    setQuoteObjArr(initializeQuoteObjArr(splitQuote))
+  }
+
+  async function refreshPage() {
+    setQuoteObjArrCurrIndex(0)
+    setTypingStartTime(undefined)
+    pageInit()
   }
 
   function renderQuote(renderableQuote: wordObj[]) {
@@ -91,18 +105,61 @@ const Typer: NextPage = () => {
     )
   }
 
+  function correctWords() {
+    let correctWords: number = 0;
+    [...quoteObjArr].map(function(word: wordObj) {
+      if (word.class === 'styles.correctWord') {
+        correctWords += 1
+      }
+    })
+    return correctWords
+  }
+
+  function wordAccuracy() {
+    return Math.round((correctWords() / quoteObjArr.length) * 100)
+  }
+
+  function wordsPerMinute() {
+    if (typingStartTime === undefined) {
+      return '--'
+    } else {
+      if (quoteObjArrCurrIndex === quoteObjArr.length) {
+        return Math.round(
+          (quoteObjArr.length / ((Date.now() - typingStartTime) * 0.001)) * 60
+        )
+      } else {
+        return '--'
+      }
+    }
+  }
+
+  function currentHeader() {
+    return (
+      <div className={ styles.currentHeader }>
+        <div className={ styles.header }>
+          ACC: { wordAccuracy() }%
+          | WPM: { wordsPerMinute() }
+        </div>
+      </div>
+    )
+  }
+
+  let memoizedCurrentHeader = useMemo(function() {
+    return currentHeader()
+  }, [quoteObjArrCurrIndex])
+
   let memoizedRenderQuote = useMemo(function() {
     return renderQuote(quoteObjArr)
   }, [quoteObjArr])
 
   useEffect(function() {
-    console.log()
     pageInit()
   }, [])
 
   return(
     <>
       <div className={ styles.appWrapper }>
+        { memoizedCurrentHeader }
         <div className={ styles.container }>
           <div>
             { memoizedRenderQuote }
@@ -113,14 +170,14 @@ const Typer: NextPage = () => {
               onInput={ function(e: ChangeEvent<HTMLInputElement>) {
                 changeInput(e)
               }} 
-              onKeyDown={ function(e: any) {
+              onKeyDown={ function(e: KeyboardEvent<HTMLInputElement>) {
                 inputHandler(e)
               }}
               className={ styles.userInputField }
             />
             <button 
               className={ styles.refreshButton }
-              onClick={ () => {} }>
+              onClick={ function() { refreshPage() } }>
               refresh
             </button>
           </div>
