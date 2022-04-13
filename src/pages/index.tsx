@@ -76,30 +76,50 @@ const Typer: NextPage = () => {
     pageInit()
   }
 
+  function renderDefaultWord(word: wordObj, index: number) {
+    return <div className={ styles.defaultWord } key={ index }>
+      { word.word }&nbsp;
+    </div>
+  }
+
+  function renderCurrentWord(word: wordObj, index: number) {
+    return <div className={ styles.currentWord } key={ index }>
+      { word.word }&nbsp;
+    </div>
+  }
+
+  function renderCorrectWord(word: wordObj, index: number) {
+    return <div className={ styles.correctWord } key={ index }>
+      { word.word }&nbsp;
+    </div>
+  }
+
+  function renderIncorrectWord(word: wordObj, index: number) {
+    return <div className={ styles.incorrectWord } key={ index }>
+      { word.word }&nbsp;
+    </div>
+  }
+
+  function renderWord(word: wordObj, index: number) {
+    switch (word.class) {
+      case 'styles.defaultWord':
+        if (word.index === quoteObjArrCurrIndex) {
+          return renderCurrentWord(word, index)
+        } else {
+          return renderDefaultWord(word, index)
+        }
+      case 'styles.correctWord':
+        return renderCorrectWord(word, index)
+      case 'styles.incorrectWord':
+        return renderIncorrectWord(word, index)
+    }
+  }
+
   function renderQuote(renderableQuote: wordObj[]) {
     return (
       <div className={ styles.renderedWordsContainer }>
         { [...renderableQuote].map(function(word: wordObj, index: number) {
-          switch (word.class) {
-            case 'styles.defaultWord':
-              if (word.index === quoteObjArrCurrIndex) {
-                return <div className={ styles.currentWord } key={ index }>
-                  { word.word }&nbsp;
-                </div>
-              } else {
-                return <div className={ styles.defaultWord } key={ index }>
-                  { word.word }&nbsp;
-                </div>
-              }
-            case 'styles.correctWord':
-              return <div className={ styles.correctWord } key={ index }>
-                { word.word }&nbsp;
-              </div>
-            case 'styles.incorrectWord':
-              return <div className={ styles.incorrectWord } key={ index }>
-                { word.word }&nbsp;
-              </div>
-          }
+          return renderWord(word, index)
         }) }
       </div>
     )
@@ -125,7 +145,7 @@ const Typer: NextPage = () => {
     } else {
       if (quoteObjArrCurrIndex === quoteObjArr.length) {
         return Math.round(
-          (quoteObjArr.length / ((Date.now() - typingStartTime) * 0.001)) * 60
+          (correctWords() / ((Date.now() - typingStartTime) * 0.001)) * 60
         )
       } else {
         return '--'
@@ -144,13 +164,13 @@ const Typer: NextPage = () => {
     )
   }
 
-  let memoizedCurrentHeader = useMemo(function() {
-    return currentHeader()
-  }, [quoteObjArrCurrIndex])
-
   let memoizedRenderQuote = useMemo(function() {
     return renderQuote(quoteObjArr)
   }, [quoteObjArr])
+
+  let memoizedCurrentHeader = useMemo(function() {
+    return currentHeader()
+  }, [quoteObjArrCurrIndex, memoizedRenderQuote])
 
   useEffect(function() {
     pageInit()
