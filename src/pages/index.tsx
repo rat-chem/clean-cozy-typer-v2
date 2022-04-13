@@ -14,17 +14,19 @@ const Typer: NextPage = () => {
   const [quoteObjArrCurrIndex, setQuoteObjArrCurrIndex] = useState<number>(0)
   const [typingStartTime, setTypingStartTime] = useState<number | undefined>(undefined)
 
-  function validateInput(): wordObj[] {
-    return [...quoteObjArr].map(function(word: wordObj) {
-      if (word.index === quoteObjArrCurrIndex) {
-        if (word.word === input) {
-          word.class = 'styles.correctWord'
-        } else {
-          word.class = 'styles.incorrectWord'
-        }
+  function wordCorrectness(word: wordObj) {
+    if (word.index === quoteObjArrCurrIndex) {
+      if (word.word === input) {
+        word.class = 'styles.correctWord'
+      } else {
+        word.class = 'styles.incorrectWord'
       }
-      return word
-    })
+    }
+    return word
+  }
+
+  function validateInput(): wordObj[] {
+    return [...quoteObjArr].map(wordCorrectness)
   } 
 
   function changeInput(e: ChangeEvent<HTMLInputElement>) {
@@ -54,14 +56,16 @@ const Typer: NextPage = () => {
     return [...splittableQuote.split(' ')]
   }
 
+  function initializeWord(word: string, index: number) {
+    return {
+      word: word,
+      class: 'styles.defaultWord',
+      index: index,
+    }
+  }
+
   function initializeQuoteObjArr(splitQuote: string[]): wordObj[] {
-    return splitQuote.map(function(word: string, index: number) {
-      return {
-        word: word,
-        class: 'styles.defaultWord',
-        index: index,
-      }
-    })
+    return splitQuote.map(initializeWord)
   }
   
   async function pageInit() {
@@ -100,14 +104,18 @@ const Typer: NextPage = () => {
     </div>
   }
 
+  function checkForCurrentWord(word: wordObj, index: number) {
+    if (word.index === quoteObjArrCurrIndex) {
+      return renderCurrentWord(word, index)
+    } else {
+      return renderDefaultWord(word, index)
+    }
+  }
+
   function renderWord(word: wordObj, index: number) {
     switch (word.class) {
       case 'styles.defaultWord':
-        if (word.index === quoteObjArrCurrIndex) {
-          return renderCurrentWord(word, index)
-        } else {
-          return renderDefaultWord(word, index)
-        }
+        checkForCurrentWord(word, index)
       case 'styles.correctWord':
         return renderCorrectWord(word, index)
       case 'styles.incorrectWord':
