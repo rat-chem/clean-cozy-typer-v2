@@ -42,40 +42,20 @@ const Typer: NextPage = () => {
     }
   }
 
-  function renderVisualKeyboard() {
-    return (
-      <div className={ styles.renderedWordsContainer }>
-        { [...visualKeyboard].map(function(key: keyboardButton, index: number) {
-          return renderVisualKeyboardKey(key, index)
-        }) }
-      </div>
-    )
-  }
+  //function renderVisualKeyboard() {
+    //return (
+      //<div className={ styles.renderedWordsContainer }>
+        //{ [...visualKeyboard].map(function(key: keyboardButton, index: number) {
+          //return renderVisualKeyboardKey(key, index)
+        //}) }
+      //</div>
+    //)
+  //}
 
-  function renderVisualKeyboardLayer1() {
+  function renderVisualKeyboardLayer(layer: number[]) {
     return (
       <div className={ styles.renderedWordsContainer }>
-        { [...visualKeyboard.slice(0, 10)].map(function(key: keyboardButton, index: number) {
-          return renderVisualKeyboardKey(key, index)
-        }) }
-      </div>
-    )
-  }
-
-  function renderVisualKeyboardLayer2() {
-    return (
-      <div className={ styles.renderedWordsContainer }>
-        { [...visualKeyboard.slice(10, 19)].map(function(key: keyboardButton, index: number) {
-          return renderVisualKeyboardKey(key, index)
-        }) }
-      </div>
-    )
-  }
-
-  function renderVisualKeyboardLayer3() {
-    return (
-      <div className={ styles.renderedWordsContainer }>
-        { [...visualKeyboard.slice(19)].map(function(key: keyboardButton, index: number) {
+        { [...visualKeyboard.slice(layer[0], layer[1])].map(function(key: keyboardButton, index: number) {
           return renderVisualKeyboardKey(key, index)
         }) }
       </div>
@@ -101,6 +81,7 @@ const Typer: NextPage = () => {
   }
 
   function onKeyPressDownChangeClass(key: any) {
+    console.log(key)
     setVisualKeyboard(reInitVisualKeyboardOnKeyDown(key))
   }
 
@@ -317,17 +298,17 @@ const Typer: NextPage = () => {
         </div>
         <div className={ styles.keyboard }>
           { useMemo(function() {
-            return renderVisualKeyboardLayer1()
+            return renderVisualKeyboardLayer([0, 10])
           }, [visualKeyboard]) }
         </div>
         <div className={ styles.keyboard }>
           { useMemo(function() {
-            return renderVisualKeyboardLayer2()
+            return renderVisualKeyboardLayer([10, 19])
           }, [visualKeyboard]) }
         </div>
         <div className={ styles.keyboard }>
           { useMemo(function() {
-            return renderVisualKeyboardLayer3()
+            return renderVisualKeyboardLayer([19, visualKeyboard.length])
           }, [visualKeyboard]) }
         </div>
       </div>
