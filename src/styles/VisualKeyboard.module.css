@@ -1,0 +1,29 @@
+.renderedVisualKeyboardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-self: center;
+}
+
+.keyboard {
+  justify-self: center;
+  display: flex;
+}
+
+.keyboardKeyNotPressed {
+  color: white;
+  font-size: 2rem;
+  width: 4rem;
+  padding: 0.25rem;
+  height: 4;
+  margin: 0.1rem;
+  border: 0.1rem solid white;
+}
+
+.keyboardKeyPressed {
+  color: black;
+  font-size: 2rem;
+  background-color: white;
+  padding: 0.25rem;
+  margin: 0.1rem;
+  border: 0.1rem solid white;
+}
