@@ -78,6 +78,7 @@ const Typer: NextPage = () => {
   async function refreshPage() {
     setCurrentTyperIndex(0)
     setTypingStartTime(undefined)
+    setInput('')
     pageInit()
   }
 
@@ -209,8 +210,8 @@ const Typer: NextPage = () => {
             </button>
           </div>
         </div>
-        <VisualKeyboard />
       </div>
+      <VisualKeyboard />
     </>
   )
 }
