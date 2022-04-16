@@ -7,6 +7,19 @@
   --theme-1-orange        : #cd5e42;
   --theme-1-red           : #CD4277;
 
+  --default-key-width: 3.5rem;
+  --default-key-height: 3.5rem;
+
+  --backspace-width: 7.5rem;
+  --spacebar-width: 25rem;
+  --tab-width: 5.5rem;
+  --capslock-width: 7.25rem;
+  --enter-width: 7.65rem;
+  --shift-width: 9.4rem;
+  --backslash-width: 5.5rem;
+
+  --keypress-transition: 50ms;
+
   display: flex;
   flex-wrap: wrap;
   justify-self: center;
@@ -14,7 +27,7 @@
   margin-right: auto;
 }
 
-.keyboard {
+.keyboardLayer {
   justify-self: center;
   display: flex;
 }
@@ -22,159 +35,175 @@
 .keyboardKeyNotPressed {
   color: white;
   background-color: var(--theme-1-background-light);
-  width: 3.5rem;
-  height: 3.5rem;
+  width: var(--default-key-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .keyboardKeyPressed {
   color: var(--theme-1-background-dark);
   background-color: white;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: var(--default-key-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .backspaceNotPressed {
   color: white;
   background-color: var(--theme-1-background-light);
-  width: 7.5rem;
-  height: 3.5rem;
+  width: var(--backspace-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .backspacePressed {
   color: var(--theme-1-background-dark);
   background-color: white;
-  width: 7.5rem;
-  height: 3.5rem;
+  width: var(--backspace-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .spacebarNotPressed {
   color: white;
   background-color: var(--theme-1-background-light);
-  width: 25rem;
-  height: 3.5rem;
+  width: var(--spacebar-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .spacebarPressed {
   color: var(--theme-1-background-dark);
   background-color: white;
-  width: 25rem;
-  height: 3.5rem;
+  width: var(--spacebar-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .tabNotPressed {
   color: white;
   background-color: var(--theme-1-background-light);
-  width: 5.5rem;
-  height: 3.5rem;
+  width: var(--tab-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .tabPressed {
   color: var(--theme-1-background-dark);
   background-color: white;
-  width: 5.5rem;
-  height: 3.5rem;
+  width: var(--tab-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .capslockNotPressed {
   color: white;
   background-color: var(--theme-1-background-light);
-  width: 7rem;
-  height: 3.5rem;
+  width: var(--capslock-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .capslockPressed {
   color: var(--theme-1-background-dark);
   background-color: white;
-  width: 7rem;
-  height: 3.5rem;
+  width: var(--capslock-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .enterNotPressed {
   color: white;
   background-color: var(--theme-1-background-light);
-  width: 7.85rem;
-  height: 3.5rem;
+  width: var(--enter-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .enterPressed {
   color: var(--theme-1-background-dark);
   background-color: white;
-  width: 7.85rem;
-  height: 3.5rem;
+  width: var(--enter-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .shiftNotPressed {
   color: white;
   background-color: var(--theme-1-background-light);
-  width: 9.35rem;
-  height: 3.5rem;
+  width: var(--shift-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .shiftPressed {
   color: var(--theme-1-background-dark);
   background-color: white;
-  width: 9.35rem;
-  height: 3.5rem;
+  width: var(--shift-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .backslashNotPressed {
   color: white;
   background-color: var(--theme-1-background-light);
-  width: 5.5rem;
-  height: 3.5rem;
+  width: var(--backslash-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }
 
 .backslashPressed {
   color: var(--theme-1-background-dark);
   background-color: white;
-  width: 5.5rem;
-  height: 3.5rem;
+  width: var(--backslash-width);
+  height: var(--default-key-height);
   padding: 0.5rem;
   margin: 0.2rem;
   border-radius: 0.1rem;
+  transition: var(--keypress-transition);
 }

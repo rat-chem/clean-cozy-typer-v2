@@ -10,12 +10,6 @@ const VisualKeyboard: NextPage = () => {
     index: number,
   }
 
-  //const KEYBOARD_KEYS = [
-    //'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
-    //'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
-    //'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.',
-  //]
-
   const KEYBOARD = [
     'Escape', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
     'Tab', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', '\\',
@@ -215,32 +209,42 @@ const VisualKeyboard: NextPage = () => {
     setVisualKeyboard(initializeVisualKeyboard)
   }, [])
 
+  let memoizedVisualKeyboardLayer1 = useMemo(function() {
+    return renderVisualKeyboardLayer([0, 14])
+  }, [visualKeyboard])
+
+  let memoizedVisualKeyboardLayer2 = useMemo(function() {
+    return renderVisualKeyboardLayer([14, 28])
+  }, [visualKeyboard])
+
+  let memoizedVisualKeyboardLayer3 = useMemo(function() {
+    return renderVisualKeyboardLayer([28, 41])
+  }, [visualKeyboard])
+
+  let memoizedVisualKeyboardLayer4 = useMemo(function() {
+    return renderVisualKeyboardLayer([41, 53])
+  }, [visualKeyboard]) 
+
+  let memoizedVisualKeyboardLayer5 = useMemo(function() {
+    return renderVisualKeyboardLayer([53, 54])
+  }, [visualKeyboard])
+
   return (
     <>
-      <div className={ styles.keyboard }>
-        { useMemo(function() {
-          return renderVisualKeyboardLayer([0, 14])
-        }, [visualKeyboard]) }
+      <div className={ styles.keyboardLayer }>
+        { memoizedVisualKeyboardLayer1 }
       </div>
-      <div className={ styles.keyboard }>
-        { useMemo(function() {
-          return renderVisualKeyboardLayer([14, 28])
-        }, [visualKeyboard]) }
+      <div className={ styles.keyboardLayer }>
+        { memoizedVisualKeyboardLayer2 }
       </div>
-      <div className={ styles.keyboard }>
-        { useMemo(function() {
-          return renderVisualKeyboardLayer([28, 41])
-        }, [visualKeyboard]) }
+      <div className={ styles.keyboardLayer }>
+        { memoizedVisualKeyboardLayer3 }
       </div>
-      <div className={ styles.keyboard }>
-        { useMemo(function() {
-          return renderVisualKeyboardLayer([41, 53])
-        }, [visualKeyboard]) }
+      <div className={ styles.keyboardLayer }>
+        { memoizedVisualKeyboardLayer4 }
       </div>
-      <div className={ styles.keyboard }>
-        { useMemo(function() {
-          return renderVisualKeyboardLayer([53, 54])
-        }, [visualKeyboard]) }
+      <div className={ styles.keyboardLayer }>
+        { memoizedVisualKeyboardLayer5 }
       </div>
     </>
   )

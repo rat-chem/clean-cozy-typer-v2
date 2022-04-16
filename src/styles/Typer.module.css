@@ -86,12 +86,15 @@
 
 .currentWord {
   color: var(--theme-1-blue);
+  transition: 50ms;
 }
 
 .correctWord {
   color: var(--theme-1-green);
+  transition: 50ms;
 }
 
 .incorrectWord {
   color: var(--theme-1-red);
+  transition: 50ms;
 }

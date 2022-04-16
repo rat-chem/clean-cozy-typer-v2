@@ -47,10 +47,11 @@ const Typer: NextPage = () => {
     }
   }
 
-  async function fetchQuote(): Promise<string> {
-    const response = await fetch('https://api.quotable.io/random')
+  async function fetchQuote() {
+    const response = await fetch('https://animechan.vercel.app/api/random')
     const result = await response.json()
-    return result.content
+    console.log(result)
+    return result
   }
 
   function splitQuoteAtSpaces(splittableQuote: string): string[] {
@@ -71,7 +72,7 @@ const Typer: NextPage = () => {
   
   async function pageInit() {
     let fetchedQuote = await fetchQuote()
-    let splitQuote = splitQuoteAtSpaces(fetchedQuote)
+    let splitQuote = splitQuoteAtSpaces(fetchedQuote.quote)
     setQuoteObjArr(initializeQuoteObjArr(splitQuote))
   }
 
